@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Com-Rubik</title>
+  <style>
+    /* === Global Styling === */
+    :root {
+      --accent: #37c97b;
+      --bg-dark: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      --bg-light: linear-gradient(135deg, #e0f7fa, #ffffff, #e0f7fa);
+      --text-dark: #fff;
+      --text-light: #111;
+      --card-bg-dark: rgba(255, 255, 255, 0.08);
+      --card-bg-light: rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      min-height: 100vh;
+      transition: all 0.5s ease;
+    }
+
+    body.light {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    h4 {
+      margin: 15px 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 6px rgba(0,0,0,0.6);
+    }
+
+    a {
+      color: var(--accent);
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    a:hover {
+      text-decoration: underline;
+      color: #4ff59d;
+    }
+
+    /* === Layout === */
+    .top-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 50px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    /* === Video (FIXED) === */
+    .video-box {
+      border: 3px solid var(--accent);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6);
+      width: 100%;           /* Use width instead of max-width for better flex */
+      max-width: 480px;      /* Slightly larger max width */
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .video-box:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px var(--accent);
+    }
+    .video-box iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9; /* This keeps the video shape perfect on all screens */
+      border: none;
+      display: block;
+    }
+
+    /* === Timer === */
+    .timer-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      min-width: 260px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .timer-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px var(--accent);
+    }
+
+    #timer {
+      font-size: 52px;
+      font-weight: bold;
+      font-family: monospace;
+      padding: 20px 32px;
+      border-radius: 14px;
+      background: #111;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 14px var(--accent), inset 0 0 10px rgba(55, 201, 123, 0.5);
+      margin-bottom: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #ccc;
+      letter-spacing: 0.4px;
+    }
+
+    /* === Shop Section === */
+    .shop {
+      margin-top: 50px;
+      padding: 30px;
+      border-radius: 16px;
+      background: var(--card-bg-dark);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      display: inline-block;
+      animation: fadeIn 1.2s ease-in-out;
+      transition: 0.4s ease;
+    }
+    body.light .shop {
+      background: var(--card-bg-light);
+    }
+
+    .shop img {
+      border-radius: 14px;
+      border: 2px solid #fff;
+      background: #fff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .shop img:hover {
+      transform: scale(1.12) rotate(3deg);
+      box-shadow: 0 0 25px var(--accent);
+    }
+
+    /* === Dark/Light Button === */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 18px var(--accent);
+    }
+
+    /* === Animations === */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">🌙 Theme</button>
+
+  <h2>✨ This website is made for cubers and those who want to learn the Rubik’s Cube ✨</h2>
+
+  <div class="top-section">
+    <div class="video-box">
+      <iframe 
+        src="https://www.youtube.com/embed/cHhjBVOmq68" 
+        title="حل مكعب روبيك 1" 
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <div class="timer-box">
+      <div id="timer">00:00.000</div>
+      <div class="note">Press <b>SPACE</b> to start/stop • <b>R</b> to reset</div>
+    </div>
+  </div>
+
+  <label>If you liked my videos then subscribe to my channel on </label>
+  <a href="https://www.youtube.com/@programer-cuber">YouTube</a>
+  <br>
+
+  <div class="shop">
+    <h4>🛒 The best place to buy cubes in Arab countries is:</h4>
+    <a href="https://linktr.ee/oxlrubiks">
+      <img height="100" width="100" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU7k-p5XBvCcLMlrIWYQJrUkuo_UiupU0SV5TNjkEdKypQJsnC-P3GNZ17jFItVhoK7EA&usqp=CAU" alt="OXL Rubiks">
+    </a>
+
+    <h4>🌍 The best place to buy in Europe and America is:</h4>
+    <a href="https://speedcubeshop.com/?srsltid=AfmBOoqxj-C5cubfTO7vxIo_7GgdRv2-dbRqcsKbdQWjUxuAJJnIwatK">
+      <img height="100" width="100" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3im5QfNcl_8ySSpnUifntYHAl1uF9wgU15A&s" alt="SpeedCubeShop">
+    </a>
+  </div>
+
+  <script>
+    // === Theme Toggle ===
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+    }
+
+    // === Timer ===
+    let running = false, startTime, interval;
+    const timerEl = document.getElementById("timer");
+
+    function format(ms) {
+      let m = Math.floor(ms / 60000);
+      let s = Math.floor((ms % 60000) / 1000);
+      let msPart = ms % 1000;
+      return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}.${String(msPart).padStart(3,"0")}`;
+    }
+
+    function startTimer() {
+      startTime = Date.now();
+      interval = setInterval(() => {
+        let elapsed = Date.now() - startTime;
+        timerEl.textContent = format(elapsed);
+      }, 10);
+    }
+
+    function stopTimer() {
+      clearInterval(interval);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (!running) {
+          startTimer();
+          running = true;
+        } else {
+          stopTimer();
+          running = false;
+        }
+      }
+      if (e.code === "KeyR") {
+        stopTimer();
+        timerEl.textContent = "00:00.000";
+        running = false;
+      }
+    });
+  </script>
+
+  <script src="script.js"></script>
+
+  <script>
+    alert("It works! The website is running.");
+    console.log("JavaScript is connected.");
+  </script>
+
+</body>
+</html>
