@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -25,7 +24,6 @@
       overflow-x: hidden;
     }
 
-    /* NEON TEXT LOGO */
     .logo-header {
       margin-top: 30px;
       text-align: center;
@@ -73,7 +71,6 @@
       #timer { font-size: 70px !important; }
     }
 
-    /* ACADEMY SIDE */
     .tutorial-pane {
       background: var(--panel-bg);
       padding: 20px;
@@ -93,7 +90,6 @@
     }
     .algo-box { background: #000; padding: 8px; border-radius: 6px; color: var(--algo-color); font-family: monospace; text-align: center; margin-top: 8px; }
 
-    /* TIMER SIDE */
     .data-pane { display: flex; flex-direction: column; gap: 20px; }
     
     .timer-card {
@@ -142,15 +138,14 @@
 
   <header>
     <div id="scramble-display">Generating Scramble...</div>
-    <div style="font-size: 0.7rem; opacity: 0.4; margin-top: 5px;">(I) INSPECTION: ON</div>
+    <div style="font-size: 0.7rem; opacity: 0.4; margin-top: 5px;">(I) INSPECTION: 15s</div>
   </header>
 
   <div class="main-layout">
-    
     <div class="data-pane">
       <div class="timer-card" id="timer-trigger">
         <div id="timer">0.00</div>
-        <div id="status-hint" style="opacity: 0.4; font-size: 0.7rem; margin-top: 10px;">HOLD TO READY</div>
+        <div id="status-hint" style="opacity: 0.4; font-size: 0.7rem; margin-top: 10px;">PRESS TO INSPECT</div>
       </div>
 
       <div class="stats-grid">
@@ -181,42 +176,35 @@
       <div class="step-card">
         <span style="color:var(--accent); font-weight:bold;">1. WHITE CROSS</span>
         <p style="font-size:0.85rem;">Daisy on Yellow center → Match sides → Flip 180°.</p>
-        
       </div>
       <div class="step-card">
         <span style="color:var(--accent); font-weight:bold;">2. FIRST LAYER</span>
         <div class="algo-box">R' D' R D</div>
-        
       </div>
       <div class="step-card">
         <span style="color:var(--accent); font-weight:bold;">3. SECOND LAYER</span>
         <p style="font-size:0.8rem;">Right: U R U' R' U' F' U F<br>Left: U' L' U L U F U' F'</p>
-        
       </div>
       <div class="step-card">
         <span style="color:var(--accent); font-weight:bold;">4. YELLOW CROSS</span>
         <div class="algo-box">F R U R' U' F'</div>
-        
       </div>
       <div class="step-card">
         <span style="color:var(--accent); font-weight:bold;">5. OLL (YELLOW TOP)</span>
         <div class="algo-box">R U R' U R U2 R'</div>
-        
       </div>
       <div class="step-card">
         <span style="color:var(--accent); font-weight:bold;">6. CORNER PERMUTATION</span>
         <div class="algo-box">R' F R' B2 R F' R' B2 R2</div>
-        
       </div>
       <div class="step-card">
         <span style="color:var(--accent); font-weight:bold;">7. FINAL EDGE CYCLE</span>
         <div class="algo-box">F2 U L R' F2 L' R U F2</div>
-        
       </div>
     </div>
-
   </div>
-    <h6>if you want to learn the cube by a video click  <a href="https://www.youtube.com/channel/UCTmgbsO_niVSKeqzkD3FrHg">here</a></h6>
+  
+  <h6>if you want to learn the cube by a video click <a href="https://www.youtube.com/channel/UCTmgbsO_niVSKeqzkD3FrHg" target="_blank">here</a></h6>
   <footer>CUBEHOUSE PRO v4.0 • 2025</footer>
 
   <script>
@@ -227,6 +215,7 @@
     
     let startTime, interval, inspectInterval;
     let running = false, ready = false, inspecting = false;
+    let waitingForInspection = true; // NEW: Logic gate for idle state
     let holdTimeout;
     let history = JSON.parse(localStorage.getItem('cubehouse_pro_v4')) || [];
 
@@ -249,7 +238,6 @@
       document.getElementById('pb-display').innerText = times.length ? formatTime(Math.min(...times)) : "--";
       document.getElementById('count-display').innerText = history.length;
       
-      // Calculate Average of 5
       if(times.length >= 5) {
         const last5 = times.slice(0, 5);
         const avg = last5.reduce((a,b)=>a+b, 0) / 5;
@@ -266,15 +254,40 @@
     function handleStart() {
       if (running) {
         stopTimer();
+      } else if (waitingForInspection) {
+        // First click after a solve or at start: Begin 15s inspection
+        startInspection();
       } else if (inspecting) {
-        // Transition from Inspection to Holding
-        clearInterval(inspectInterval);
-        inspecting = false;
-        trigger.classList.remove('inspection');
-        startHolding();
-      } else {
+        // During inspection: Hold to prepare the actual timer
         startHolding();
       }
+    }
+
+    function handleEnd() {
+      clearTimeout(holdTimeout);
+      if (ready && !running) {
+        startTimer();
+      }
+      ready = false;
+      trigger.classList.remove('holding', 'ready');
+    }
+
+    function startInspection() {
+      waitingForInspection = false;
+      inspecting = true;
+      let count = 15;
+      timerEl.innerText = count;
+      trigger.classList.add('inspection');
+      hintEl.innerText = "INSPECTING - HOLD TO READY";
+      
+      inspectInterval = setInterval(() => {
+        count--;
+        timerEl.innerText = count;
+        if(count <= 0) {
+          clearInterval(inspectInterval);
+          startTimer(); 
+        }
+      }, 1000);
     }
 
     function startHolding() {
@@ -287,38 +300,11 @@
       }, 300);
     }
 
-    function handleEnd() {
-      clearTimeout(holdTimeout);
-      if (ready && !running) {
-        startTimer();
-      } else if (!ready && !running && !inspecting) {
-        startInspection();
-      }
-      ready = false;
-      trigger.classList.remove('holding', 'ready');
-    }
-
-    function startInspection() {
-      inspecting = true;
-      let count = 15;
-      timerEl.innerText = count;
-      trigger.classList.add('inspection');
-      hintEl.innerText = "INSPECTION";
-      inspectInterval = setInterval(() => {
-        count--;
-        timerEl.innerText = count;
-        if(count <= 0) {
-          clearInterval(inspectInterval);
-          startTimer(); // Automatic start if inspection hits 0
-        }
-      }, 1000);
-    }
-
     function startTimer() {
       clearInterval(inspectInterval);
       inspecting = false;
       running = true;
-      trigger.classList.remove('inspection');
+      trigger.classList.remove('inspection', 'holding', 'ready');
       hintEl.innerText = "SOLVING...";
       startTime = Date.now();
       interval = setInterval(() => {
@@ -329,7 +315,9 @@
     function stopTimer() {
       clearInterval(interval);
       running = false;
-      hintEl.innerText = "HOLD TO READY";
+      waitingForInspection = true; // Wait for user to trigger next inspection
+      hintEl.innerText = "PRESS TO INSPECT";
+      
       history.unshift({ time: Date.now() - startTime, date: new Date().toLocaleDateString() });
       localStorage.setItem('cubehouse_pro_v4', JSON.stringify(history));
       updateUI();
@@ -348,13 +336,30 @@
     }
 
     function resetStore() {
-      if(confirm("Erase all solve history?")) { history = []; localStorage.removeItem('cubehouse_pro_v4'); timerEl.innerText="0.00"; updateUI(); }
+      if(confirm("Erase all solve history?")) { 
+        history = []; 
+        localStorage.removeItem('cubehouse_pro_v4'); 
+        timerEl.innerText="0.00"; 
+        waitingForInspection = true;
+        hintEl.innerText = "PRESS TO INSPECT";
+        updateUI(); 
+      }
     }
 
-    // Input Handlers
-    window.addEventListener('keydown', (e) => { if(e.code === 'Space') { e.preventDefault(); if(!e.repeat) handleStart(); } });
-    window.addEventListener('keyup', (e) => { if(e.code === 'Space') handleEnd(); });
-    trigger.addEventListener('pointerdown', (e) => { e.preventDefault(); handleStart(); });
+    // Input Listeners
+    window.addEventListener('keydown', (e) => { 
+      if(e.code === 'Space') { 
+        e.preventDefault(); 
+        if(!e.repeat) handleStart(); 
+      } 
+    });
+    window.addEventListener('keyup', (e) => { 
+      if(e.code === 'Space') handleEnd(); 
+    });
+    trigger.addEventListener('pointerdown', (e) => { 
+      e.preventDefault(); 
+      handleStart(); 
+    });
     window.addEventListener('pointerup', handleEnd);
 
     generateScramble();
