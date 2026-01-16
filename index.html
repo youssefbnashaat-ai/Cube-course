@@ -3,368 +3,353 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <title>CubeHouse Pro | Elite Timer & Shop</title>
+  <title>Rubiks Home | Pro Elite</title>
   <style>
     :root {
       --accent: #00ffa3;
+      --accent-glow: rgba(0, 255, 163, 0.3);
       --bg-dark: #0b0e11;
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --text: #ffffff;
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text: #e0e6ed;
       --danger: #ff4b4b;
+      --warning: #ffae00;
+      --panel-bg: #14171b;
       --algo-color: #ffcc00;
-      --panel-bg: #1a1d21;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       margin: 0; padding: 0;
       background-color: var(--bg-dark);
+      background-image: radial-gradient(circle at 50% 0%, #1c252e 0%, var(--bg-dark) 80%);
       color: var(--text);
       min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
       overflow-x: hidden;
     }
 
-    /* HEADER & LOGO */
-    .logo-header { margin-top: 30px; text-align: center; }
-    .neon-text {
-      font-size: 2.5rem; font-weight: 900; letter-spacing: 5px;
-      text-transform: uppercase; color: #fff;
-      text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
-      animation: pulse 2s infinite;
+    /* Header & Scramble */
+    .brand-header { margin-top: 30px; text-align: center; }
+    .brand-name {
+      font-size: 2.2rem; font-weight: 900; letter-spacing: 4px;
+      color: #fff; text-shadow: 0 0 15px var(--accent-glow);
+      text-transform: uppercase;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); }
-    }
-
-    header { width: 100%; text-align: center; padding: 10px; }
     
     #scramble-display {
-      font-family: 'JetBrains Mono', monospace; font-size: 1.1rem;
-      background: var(--card-bg); padding: 18px; border-radius: 12px;
-      margin: 10px auto; color: var(--accent);
-      border: 1px solid rgba(255,255,255,0.1); width: 85%; max-width: 800px;
+      font-family: 'JetBrains Mono', monospace; font-size: 1.2rem;
+      background: rgba(0,0,0,0.6); padding: 25px; border-radius: 20px;
+      margin: 20px auto; color: var(--accent);
+      border: 1px solid var(--glass-border); width: 85%; max-width: 900px;
+      text-align: center; line-height: 1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    /* MAIN LAYOUT */
-    .main-layout {
-      display: grid; grid-template-columns: 1fr 380px; gap: 20px;
-      width: 95%; max-width: 1300px; margin-bottom: 40px;
+    /* Layout */
+    .main-grid {
+      display: grid; grid-template-columns: 320px 1fr 340px; gap: 20px;
+      width: 98%; max-width: 1700px; padding: 10px;
     }
 
-    @media (max-width: 950px) {
-      .main-layout { grid-template-columns: 1fr; }
-      #timer { font-size: 70px !important; }
+    @media (max-width: 1100px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .side-panel, .tutorial-pane { height: auto !important; }
     }
 
-    /* PANES */
-    .tutorial-pane {
-      background: var(--panel-bg); padding: 20px; border-radius: 20px;
-      height: 85vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);
+    /* Timer Style */
+    .timer-container { display: flex; flex-direction: column; gap: 20px; }
+    .timer-box {
+      background: var(--card-bg); backdrop-filter: blur(15px);
+      padding: 110px 20px; border-radius: 35px; border: 1px solid var(--glass-border);
+      text-align: center; cursor: pointer; position: relative;
+      transition: all 0.3s ease;
     }
-    .tutorial-pane h3 { color: var(--accent); text-align: center; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+    #timer { 
+      font-size: 130px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer-box.inspecting { color: var(--warning); border-color: var(--warning); }
+    .timer-box.warning { color: var(--danger); animation: pulse 0.5s infinite; }
+    .timer-box.holding { color: var(--danger); transform: scale(0.97); }
+    .timer-box.ready { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 50px var(--accent-glow); }
+
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+    /* Panes & Sidebars */
+    .tutorial-pane, .side-panel {
+      background: var(--panel-bg); padding: 25px; border-radius: 28px;
+      height: 78vh; overflow-y: auto; border: 1px solid var(--glass-border);
+    }
 
     .step-card {
-      background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px;
-      margin-bottom: 15px; border-left: 3px solid var(--accent);
+      background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px;
+      margin-bottom: 15px; border-left: 4px solid var(--accent);
     }
-    .algo-box { background: #000; padding: 8px; border-radius: 6px; color: var(--algo-color); font-family: monospace; text-align: center; margin-top: 8px; }
+    .algo-box { background: #000; padding: 10px; border-radius: 8px; color: var(--algo-color); font-family: monospace; text-align: center; margin-top: 8px; font-size: 0.9rem; }
 
-    .data-pane { display: flex; flex-direction: column; gap: 20px; }
-    
-    /* TIMER CARD */
-    .timer-card {
-      background: var(--card-bg); padding: 60px 20px; border-radius: 24px;
-      text-align: center; cursor: pointer; user-select: none;
-      touch-action: none; transition: 0.2s;
+    /* Session & Stats */
+    .session-selector {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+      color: white; padding: 8px; border-radius: 8px; width: 100%; margin-bottom: 15px;
     }
-    #timer { font-size: 90px; font-weight: 800; font-family: monospace; }
-    .timer-card.inspection { color: #ffae00; }
-    .timer-card.holding { color: var(--danger); }
-    .timer-card.ready { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
 
-    /* STATS */
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .stat-tile { background: var(--card-bg); padding: 12px; border-radius: 10px; text-align: center; }
-    .stat-label { font-size: 0.6rem; opacity: 0.5; }
-    .stat-val { font-size: 1.1rem; font-weight: bold; color: var(--accent); }
-
-    /* HISTORY */
-    .solve-store {
-      background: var(--panel-bg); border-radius: 18px; padding: 15px;
-      border: 1px solid rgba(255,255,255,0.1);
+    .history-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px; background: rgba(255,255,255,0.02);
+      border-radius: 10px; margin-bottom: 8px; font-size: 0.95rem;
     }
-    .history-list { max-height: 140px; overflow-y: auto; margin-bottom: 10px; }
-    .history-item { display: flex; justify-content: space-between; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 6px; margin-bottom: 5px; font-size: 0.8rem; }
+    .delete-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 5px; opacity: 0.5; }
+    .delete-btn:hover { opacity: 1; }
 
-    /* SHOP SECTION */
-    .shop {
-      width: 100%; background: var(--panel-bg); padding: 25px;
-      border-radius: 20px; border: 1px solid var(--accent); text-align: center;
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .stat-card { background: var(--card-bg); padding: 12px 5px; border-radius: 12px; border: 1px solid var(--glass-border); text-align: center; }
+    .stat-label { font-size: 0.6rem; opacity: 0.5; text-transform: uppercase; }
+    .stat-value { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+
+    /* SHOP FIX */
+    .shop-container {
+      display: flex; flex-direction: column; gap: 15px;
+      padding-top: 20px; border-top: 1px solid var(--glass-border); margin-top: 20px;
     }
-    .shop h4 { margin: 15px 0 10px; opacity: 0.9; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; }
-    .shop img { 
-      border-radius: 12px; background: white; padding: 5px; 
-      transition: 0.4s; box-shadow: 0 0 15px rgba(255,255,255,0.1); 
+    .shop-item {
+      display: flex; align-items: center; gap: 15px;
+      background: rgba(255,255,255,0.03); padding: 10px; border-radius: 15px;
+      text-decoration: none; color: inherit; transition: 0.3s;
     }
-    .shop img:hover { transform: scale(1.08); box-shadow: 0 0 25px var(--accent); }
+    .shop-item:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
+    .shop-item img { width: 60px; height: 60px; border-radius: 8px; background: white; object-fit: contain; }
+    .shop-info { text-align: left; }
+    .shop-info span { font-size: 0.7rem; opacity: 0.5; display: block; }
+    .shop-info strong { font-size: 0.85rem; color: var(--accent); }
 
-    /* BUTTONS */
-    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    .btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: 0.3s; }
-    .btn:hover { background: var(--accent); color: #000; }
-    .btn-danger { border-color: var(--danger); color: var(--danger); }
-    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+    .btn {
+      background: transparent; border: 1px solid var(--glass-border);
+      color: var(--text); padding: 12px; border-radius: 10px;
+      cursor: pointer; font-weight: 600; transition: 0.3s;
+    }
+    .btn:hover { background: var(--accent); color: #000; border-color: var(--accent); }
 
-    footer { padding: 40px 20px; opacity: 0.4; font-size: 0.8rem; text-align: center; }
-    .yt-link { color: var(--accent); text-decoration: none; font-weight: bold; border-bottom: 1px solid var(--accent); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="logo-header">
-    <div class="neon-text">CUBEHOUSE</div>
+  <div class="brand-header">
+    <div class="brand-name">RUBIKS HOME</div>
   </div>
 
-  <header>
-    <div id="scramble-display">Generating Scramble...</div>
-    <div style="font-size: 0.7rem; opacity: 0.4; margin-top: 5px;">(I) INSPECTION: 15s</div>
-  </header>
+  <div id="scramble-display">Generating Scramble...</div>
 
-  <div class="main-layout">
-    <div class="data-pane">
-      <div class="timer-card" id="timer-trigger">
-        <div id="timer">0.00</div>
-        <div id="status-hint" style="opacity: 0.4; font-size: 0.7rem; margin-top: 10px;">PRESS TO INSPECT</div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-tile"><div class="stat-label">PB</div><div class="stat-val" id="pb-display">--</div></div>
-        <div class="stat-tile"><div class="stat-label">AVG 5</div><div class="stat-val" id="avg-display">--</div></div>
-        <div class="stat-tile"><div class="stat-label">TOTAL</div><div class="stat-val" id="count-display">0</div></div>
-      </div>
-
-      <div class="solve-store">
-        <div class="history-list" id="history-list"></div>
-        <div class="action-row">
-          <button class="btn" onclick="exportData()">EXPORT CSV</button>
-          <button class="btn btn-danger" onclick="resetStore()">WIPE ALL</button>
-        </div>
-      </div>
-
-      <div class="shop">
-        <h3 style="margin:0; font-size: 1rem; letter-spacing: 2px;">CUBE MARKET</h3>
-        
-        <h4>🛒 Arab Countries</h4>
-        <a href="https://cubehouse.store/product/3x3-special-edition/" target="_blank">
-          <img height="90" width="90" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU7k-p5XBvCcLMlrIWYQJrUkuo_UiupU0SV5TNjkEdKypQJsnC-P3GNZ17jFItVhoK7EA&usqp=CAU" alt="CubeHouse Arab">
-        </a>
-
-        <h4>🌍 Worldwide</h4>
-        <a href="https://speedcubeshop.com/products/moyu-rs3-m-2020-3x3-magnetic" target="_blank">
-          <img height="90" width="90" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3im5QfNcl_8ySSpnUifntYHAl1uF9wgU15A&s" alt="SpeedCubeShop">
-        </a>
-      </div>
-    </div>
-
+  <main class="main-grid">
     <div class="tutorial-pane">
-      <h3>LEARNING HUB</h3>
+      <h3 style="color:var(--accent); margin-top:0;">ALGO REFERENCE</h3>
       <div class="step-card">
-        <span style="color:var(--accent); font-weight:bold;">1. WHITE CROSS</span>
-        <p style="font-size:0.85rem;">Daisy on Yellow center → Match sides → Flip 180°.</p>
+        <strong>1. WHITE CROSS</strong>
+        <p style="font-size:0.8rem; margin:5px 0;">Daisy Method: Align edges to yellow center, then flip to white.</p>
       </div>
       <div class="step-card">
-        <span style="color:var(--accent); font-weight:bold;">2. FIRST LAYER</span>
-        <div class="algo-box">R' D' R D</div>
+        <strong>2. SECOND LAYER</strong>
+        <div class="algo-box">U R U' R' U' F' U F</div>
       </div>
       <div class="step-card">
-        <span style="color:var(--accent); font-weight:bold;">3. SECOND LAYER</span>
-        <p style="font-size:0.8rem;">Right: U R U' R' U' F' U F<br>Left: U' L' U L U F U' F'</p>
-      </div>
-      <div class="step-card">
-        <span style="color:var(--accent); font-weight:bold;">4. YELLOW CROSS</span>
+        <strong>3. YELLOW CROSS</strong>
         <div class="algo-box">F R U R' U' F'</div>
       </div>
       <div class="step-card">
-        <span style="color:var(--accent); font-weight:bold;">5. OLL (YELLOW TOP)</span>
+        <strong>4. OLL (SUNE)</strong>
         <div class="algo-box">R U R' U R U2 R'</div>
       </div>
       <div class="step-card">
-        <span style="color:var(--accent); font-weight:bold;">6. CORNER PERMUTATION</span>
-        <div class="algo-box">R' F R' B2 R F' R' B2 R2</div>
-      </div>
-      <div class="step-card">
-        <span style="color:var(--accent); font-weight:bold;">7. FINAL EDGE CYCLE</span>
-        <div class="algo-box">F2 U L R' F2 L' R U F2</div>
-      </div>
-      
-      <div style="text-align: center; margin-top: 20px;">
-        <p style="font-size: 0.8rem;">Want video lessons?</p>
-        <a class="yt-link" href="https://www.youtube.com/channel/UCTmgbsO_niVSKeqzkD3FrHg" target="_blank">Visit Programming Cuber</a>
+        <strong>5. PLL (T-PERM)</strong>
+        <div class="algo-box">R U R' U' R' F R2 U' R' U' R U R' F'</div>
       </div>
     </div>
-  </div>
 
-  <footer>
-    CUBEHOUSE PRO v4.0 • 2025<br>
-    Built for the Speedcubing Community
-  </footer>
+    <div class="timer-container">
+      <div class="timer-box" id="timer-trigger">
+        <div id="timer">0.00</div>
+        <div id="status-hint" style="font-size: 0.8rem; opacity: 0.4; margin-top: 20px;">HOLD SPACE TO START</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Best</div><div class="stat-value" id="pb-val">--</div></div>
+        <div class="stat-card"><div class="stat-label">Mo3</div><div class="stat-value" id="mo3-val">--</div></div>
+        <div class="stat-card"><div class="stat-label">Ao5</div><div class="stat-value" id="ao5-val">--</div></div>
+        <div class="stat-card"><div class="stat-label">Ao12</div><div class="stat-value" id="ao12-val">--</div></div>
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <select class="session-selector" id="session-select" onchange="changeSession()">
+        <option value="1">Session 1</option>
+        <option value="2">Session 2</option>
+        <option value="3">Session 3</option>
+      </select>
+
+      <div class="history-scroll" id="history-list"></div>
+      
+      <div class="shop-container">
+        <h3 style="font-size: 0.9rem; color: var(--accent); margin: 0;">RECOMMENDED GEAR</h3>
+        
+        <a href="https://cubehouse.store" target="_blank" class="shop-item">
+          <img src="https://api.whatsapp.com/send/?phone=%2B201002733257&text&type=phone_number&app_absent=0" alt="CubeHouse">
+          <div class="shop-info">
+            <span>Arab Region Shop</span>
+            <strong>CubeHouse Special</strong>
+          </div>
+        </a>
+
+        <a href="https://speedcubeshop.com" target="_blank" class="shop-item">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3im5QfNcl_8ySSpnUifntYHAl1uF9wgU15A&s" alt="SCS">
+          <div class="shop-info">
+            <span>Worldwide Shipping</span>
+            <strong>MoYu RS3M 2020</strong>
+          </div>
+        </a>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn" onclick="exportData()">EXPORT</button>
+        <button class="btn" onclick="clearData()" style="color:var(--danger)">WIPE</button>
+      </div>
+    </aside>
+  </main>
 
   <script>
+    let state = 'IDLE';
+    let startTime, timerInterval, inspectInterval, holdTimeout;
+    let currentSession = "1";
+    let solves = JSON.parse(localStorage.getItem('rubiks_home_v6')) || {};
+
     const timerEl = document.getElementById('timer');
     const trigger = document.getElementById('timer-trigger');
-    const scrambleEl = document.getElementById('scramble-display');
     const hintEl = document.getElementById('status-hint');
-    
-    let startTime, interval, inspectInterval;
-    let running = false, ready = false, inspecting = false;
-    let waitingForInspection = true; 
-    let holdTimeout;
-    let history = JSON.parse(localStorage.getItem('cubehouse_pro_v4')) || [];
 
-    function formatTime(ms) { return (ms / 1000).toFixed(2); }
+    
 
     function generateScramble() {
-      const moves = ["U", "D", "L", "R", "F", "B"], mods = ["", "'", "2"];
-      let s = [], last = "";
-      for(let i=0; i<20; i++){
-        let m = moves[Math.floor(Math.random()*6)];
-        while(m === last) m = moves[Math.floor(Math.random()*6)];
-        s.push(m + mods[Math.floor(Math.random()*3)]);
-        last = m;
+      const faces = ['U', 'D', 'L', 'R', 'F', 'B'];
+      const mods = ['', "'", '2'];
+      let scramble = [];
+      let lastFace = -1;
+      for (let i = 0; i < 20; i++) {
+        let faceIdx;
+        do { faceIdx = Math.floor(Math.random() * 6); } while (faceIdx === lastFace);
+        scramble.push(faces[faceIdx] + mods[Math.floor(Math.random() * 3)]);
+        lastFace = faceIdx;
       }
-      scrambleEl.innerText = s.join(" ");
+      document.getElementById('scramble-display').innerText = scramble.join(" ");
     }
 
-    function updateUI() {
-      const times = history.map(s => s.time);
-      document.getElementById('pb-display').innerText = times.length ? formatTime(Math.min(...times)) : "--";
-      document.getElementById('count-display').innerText = history.length;
+    function getSessionSolves() { return solves[currentSession] || []; }
+
+    function updateStats() {
+      const s = getSessionSolves();
+      const times = s.map(x => x.time);
       
-      if(times.length >= 5) {
-        const last5 = times.slice(0, 5);
-        const avg = last5.reduce((a,b)=>a+b, 0) / 5;
-        document.getElementById('avg-display').innerText = formatTime(avg);
-      } else {
-        document.getElementById('avg-display').innerText = "--";
-      }
-      
-      document.getElementById('history-list').innerHTML = history.slice(0, 8).map((s, idx) => `
-        <div class="history-item"><span style="opacity:0.4">#${history.length - idx}</span><span style="color:var(--accent); font-weight:bold;">${formatTime(s.time)}s</span></div>
+      document.getElementById('pb-val').innerText = times.length ? (Math.min(...times) / 1000).toFixed(2) : "--";
+      document.getElementById('mo3-val').innerText = calcAvg(s, 3);
+      document.getElementById('ao5-val').innerText = calcAvg(s, 5);
+      document.getElementById('ao12-val').innerText = calcAvg(s, 12);
+
+      document.getElementById('history-list').innerHTML = s.slice(0, 15).map((solve, i) => `
+        <div class="history-item">
+          <span>${(solve.time / 1000).toFixed(2)}s</span>
+          <span class="delete-btn" onclick="deleteSolve(${i})">×</span>
+        </div>
       `).join('');
     }
 
+    function calcAvg(s, size) {
+      if (s.length < size) return "--";
+      let lastN = s.slice(0, size).map(x => x.time);
+      if (size >= 5) {
+        lastN.sort((a,b) => a-b);
+        lastN.pop(); lastN.shift();
+      }
+      return (lastN.reduce((a,b) => a+b, 0) / lastN.length / 1000).toFixed(2);
+    }
+
     function handleStart() {
-      if (running) {
-        stopTimer();
-      } else if (waitingForInspection) {
-        startInspection();
-      } else if (inspecting) {
-        startHolding();
+      if (state === 'RUNNING') stopTimer();
+      else if (state === 'IDLE') startInspection();
+      else if (state === 'INSPECTING') {
+        state = 'HOLDING';
+        trigger.classList.add('holding');
+        holdTimeout = setTimeout(() => {
+          state = 'READY';
+          trigger.classList.replace('holding', 'ready');
+        }, 300);
       }
     }
 
     function handleEnd() {
       clearTimeout(holdTimeout);
-      if (ready && !running) {
-        startTimer();
+      if (state === 'READY') startTimer();
+      else if (state === 'HOLDING') {
+        state = 'INSPECTING';
+        trigger.classList.remove('holding');
       }
-      ready = false;
-      trigger.classList.remove('holding', 'ready');
     }
 
     function startInspection() {
-      waitingForInspection = false;
-      inspecting = true;
+      state = 'INSPECTING';
       let count = 15;
       timerEl.innerText = count;
-      trigger.classList.add('inspection');
-      hintEl.innerText = "INSPECTING - HOLD TO READY";
-      
+      trigger.classList.add('inspecting');
       inspectInterval = setInterval(() => {
         count--;
         timerEl.innerText = count;
-        if(count <= 0) {
-          clearInterval(inspectInterval);
-          startTimer(); 
-        }
+        if (count <= 3) trigger.classList.add('warning');
+        if (count <= 0) { clearInterval(inspectInterval); startTimer(); }
       }, 1000);
-    }
-
-    function startHolding() {
-      trigger.classList.add('holding');
-      hintEl.innerText = "HOLDING...";
-      holdTimeout = setTimeout(() => {
-        ready = true;
-        trigger.classList.replace('holding', 'ready');
-        hintEl.innerText = "RELEASE TO START";
-      }, 300);
     }
 
     function startTimer() {
       clearInterval(inspectInterval);
-      inspecting = false;
-      running = true;
-      trigger.classList.remove('inspection', 'holding', 'ready');
-      hintEl.innerText = "SOLVING...";
+      state = 'RUNNING';
       startTime = Date.now();
-      interval = setInterval(() => {
-        timerEl.innerText = formatTime(Date.now() - startTime);
+      trigger.className = 'timer-box';
+      timerInterval = setInterval(() => {
+        timerEl.innerText = ((Date.now() - startTime) / 1000).toFixed(2);
       }, 10);
     }
 
     function stopTimer() {
-      clearInterval(interval);
-      running = false;
-      waitingForInspection = true; 
-      hintEl.innerText = "PRESS TO INSPECT";
-      
-      history.unshift({ time: Date.now() - startTime, date: new Date().toLocaleDateString() });
-      localStorage.setItem('cubehouse_pro_v4', JSON.stringify(history));
-      updateUI();
+      clearInterval(timerInterval);
+      const finalTime = Date.now() - startTime;
+      if(!solves[currentSession]) solves[currentSession] = [];
+      solves[currentSession].unshift({ time: finalTime, date: new Date().toLocaleDateString() });
+      localStorage.setItem('rubiks_home_v6', JSON.stringify(solves));
+      state = 'IDLE';
+      timerEl.innerText = (finalTime / 1000).toFixed(2);
+      updateStats();
       generateScramble();
     }
 
-    function exportData() {
-      let csv = "Solve #,Time(s),Date\n";
-      history.forEach((s, i) => { csv += `${history.length - i},${formatTime(s.time)},${s.date}\n`; });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', 'cubehouse_session.csv');
-      a.click();
+    function deleteSolve(idx) {
+      solves[currentSession].splice(idx, 1);
+      localStorage.setItem('rubiks_home_v6', JSON.stringify(solves));
+      updateStats();
     }
 
-    function resetStore() {
-      if(confirm("Erase all solve history?")) { 
-        history = []; 
-        localStorage.removeItem('cubehouse_pro_v4'); 
-        timerEl.innerText="0.00"; 
-        waitingForInspection = true;
-        hintEl.innerText = "PRESS TO INSPECT";
-        updateUI(); 
-      }
+    function changeSession() {
+      currentSession = document.getElementById('session-select').value;
+      updateStats();
     }
 
-    window.addEventListener('keydown', (e) => { 
-      if(e.code === 'Space') { 
-        e.preventDefault(); 
-        if(!e.repeat) handleStart(); 
-      } 
-    });
-    window.addEventListener('keyup', (e) => { 
-      if(e.code === 'Space') handleEnd(); 
-    });
-    trigger.addEventListener('pointerdown', (e) => { 
-      e.preventDefault(); 
-      handleStart(); 
-    });
+    function clearData() { if(confirm("Clear this session?")) { solves[currentSession] = []; updateStats(); } }
+
+    window.addEventListener('keydown', e => { if(e.code === 'Space') { e.preventDefault(); if(!e.repeat) handleStart(); } });
+    window.addEventListener('keyup', e => { if(e.code === 'Space') handleEnd(); });
+    trigger.addEventListener('pointerdown', e => { e.preventDefault(); handleStart(); });
     window.addEventListener('pointerup', handleEnd);
 
     generateScramble();
-    updateUI();
+    updateStats();
   </script>
 </body>
 </html>
