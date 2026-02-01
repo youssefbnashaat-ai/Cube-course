@@ -82,11 +82,20 @@
       height: 78vh; overflow-y: auto; border: 1px solid var(--glass-border);
     }
 
+    /* Updated Step Card Styling */
     .step-card {
       background: rgba(255,255,255,0.03); padding: 15px; border-radius: 14px;
       margin-bottom: 15px; border-left: 4px solid var(--accent);
     }
-    .algo-box { background: #000; padding: 10px; border-radius: 8px; color: var(--algo-color); font-family: monospace; text-align: center; margin-top: 8px; font-size: 0.9rem; }
+    .step-card strong { display: block; margin-bottom: 8px; color: #fff; font-size: 0.95rem; }
+    
+    .algo-group { margin-top: 10px; }
+    .algo-desc { font-size: 0.75rem; color: #aaa; margin-bottom: 4px; display: block; }
+    .algo-box { 
+      background: #000; padding: 8px 12px; border-radius: 6px; 
+      color: var(--algo-color); font-family: 'JetBrains Mono', monospace; 
+      font-size: 0.85rem; letter-spacing: 1px;
+    }
 
     /* Session & Stats */
     .session-selector {
@@ -144,30 +153,62 @@
   <div id="scramble-display">Generating Scramble...</div>
 
   <main class="main-grid">
+    
     <div class="tutorial-pane">
-      <h3 style="color:var(--accent); margin-top:0;">ALGO REFERENCE</h3>
+      <h3 style="color:var(--accent); margin-top:0; letter-spacing: 1px;">FULL GUIDE (LBL)</h3>
+      
       <div class="step-card">
         <strong>1. WHITE CROSS</strong>
-        <p style="font-size:0.8rem; margin:5px 0;">Daisy Method: Align edges to yellow center, then flip to white.</p>
+        <p style="font-size:0.8rem; margin:5px 0; color:#ccc;">Create a "Daisy" (yellow center, white edges), then align edges with side centers and turn 180° to white face.</p>
       </div>
+
       <div class="step-card">
-        <strong>2. SECOND LAYER</strong>
-        <div class="algo-box">U R U' R' U' F' U F</div>
+        <strong>2. FIRST LAYER CORNERS</strong>
+        <span class="algo-desc">Corner on top-right, white facing side:</span>
+        <div class="algo-box">R U R' U'</div>
+        <p style="font-size:0.75rem; margin:5px 0; opacity:0.6;">Repeat this "Sexy Move" until the corner is solved.</p>
       </div>
+
       <div class="step-card">
-        <strong>3. YELLOW CROSS</strong>
-        <div class="algo-box">F R U R' U' F'</div>
+        <strong>3. SECOND LAYER EDGES</strong>
+        <div class="algo-group">
+          <span class="algo-desc">Insert Edge to RIGHT:</span>
+          <div class="algo-box">U R U' R' U' F' U F</div>
+        </div>
+        <div class="algo-group">
+          <span class="algo-desc">Insert Edge to LEFT:</span>
+          <div class="algo-box">U' L' U L U F U' F'</div>
+        </div>
       </div>
+
       <div class="step-card">
-        <strong>4. OLL (SUNE)</strong>
+        <strong>4. YELLOW CROSS</strong>
+        <span class="algo-desc">Case: Line (Horizontal) or L-Shape:</span>
+        <div class="algo-box">F (R U R' U') F'</div>
+        <p style="font-size:0.75rem; margin:5px 0; opacity:0.6;">Repeat until you see a yellow cross.</p>
+      </div>
+
+      <div class="step-card">
+        <strong>5. ALIGN YELLOW EDGES</strong>
+        <span class="algo-desc">Use "Sune" to rotate edges:</span>
         <div class="algo-box">R U R' U R U2 R'</div>
+        <p style="font-size:0.75rem; margin:5px 0; opacity:0.6;">Swap two adjacent incorrect edges until all centers match.</p>
       </div>
+
       <div class="step-card">
-        <strong>5. PLL (T-PERM)</strong>
-        <div class="algo-box">R U R' U' R' F R2 U' R' U' R U R' F'</div>
+        <strong>6. POSITION CORNERS</strong>
+        <span class="algo-desc">Use "Niklas" to swap corners:</span>
+        <div class="algo-box">U R U' L' U R' U' L</div>
+        <p style="font-size:0.75rem; margin:5px 0; opacity:0.6;">Find one correct corner (even if twisted), hold it front-right, perform algo.</p>
+      </div>
+
+      <div class="step-card">
+        <strong>7. ORIENT CORNERS</strong>
+        <span class="algo-desc">Final Step (Be careful!):</span>
+        <div class="algo-box">R' D' R D</div>
+        <p style="font-size:0.75rem; margin:5px 0; opacity:0.6;">1. Hold unsolved corner Top-Right.<br>2. Do algo until yellow faces up.<br>3. <b>ONLY turn U layer</b> to bring next corner.<br>4. Repeat.</p>
       </div>
     </div>
-
     <div class="timer-container">
       <div class="timer-box" id="timer-trigger">
         <div id="timer">0.00</div>
@@ -194,8 +235,8 @@
       <div class="shop-container">
         <h3 style="font-size: 0.9rem; color: var(--accent); margin: 0;">RECOMMENDED GEAR</h3>
         
-        <a href="https://cubehouse.store" target="_blank" class="shop-item">
-          <img src="https://api.whatsapp.com/send/?phone=%2B201002733257&text&type=phone_number&app_absent=0" alt="CubeHouse">
+        <a href="https://cubehouse.store/product/rsc/" target="_blank" class="shop-item">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLPa-1DJ7Aqmd4Ps4qj9dwvbZycweiUR8ekQ&s" alt="CubeHouse">
           <div class="shop-info">
             <span>Arab Region Shop</span>
             <strong>CubeHouse Special</strong>
